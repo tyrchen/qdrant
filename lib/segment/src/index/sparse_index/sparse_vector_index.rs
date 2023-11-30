@@ -5,6 +5,7 @@ use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
 use atomic_refcell::AtomicRefCell;
+use common::cpu::CpuPermit;
 use common::types::{PointOffsetType, ScoredPointOffset};
 use itertools::Itertools;
 use sparse::common::sparse_vector::SparseVector;
@@ -354,7 +355,11 @@ impl<TInvertedIndex: InvertedIndex> VectorIndex for SparseVectorIndex<TInvertedI
         Ok(results)
     }
 
-    fn build_index(&mut self, stopped: &AtomicBool) -> OperationResult<()> {
+    fn build_index(
+        &mut self,
+        _permit: Arc<CpuPermit>,
+        stopped: &AtomicBool,
+    ) -> OperationResult<()> {
         self.inverted_index = Self::build_inverted_index(
             self.id_tracker.clone(),
             self.vector_storage.clone(),

@@ -3,6 +3,7 @@ use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
 use atomic_refcell::AtomicRefCell;
+use common::cpu::CpuPermit;
 use common::types::{PointOffsetType, ScoredPointOffset};
 use sparse::index::inverted_index::inverted_index_mmap::InvertedIndexMmap;
 use sparse::index::inverted_index::inverted_index_ram::InvertedIndexRam;
@@ -30,7 +31,7 @@ pub trait VectorIndex {
     ) -> OperationResult<Vec<Vec<ScoredPointOffset>>>;
 
     /// Force internal index rebuild.
-    fn build_index(&mut self, stopped: &AtomicBool) -> OperationResult<()>;
+    fn build_index(&mut self, permit: Arc<CpuPermit>, stopped: &AtomicBool) -> OperationResult<()>;
 
     fn get_telemetry_data(&self) -> VectorIndexSearchesTelemetry;
 
@@ -94,13 +95,13 @@ impl VectorIndex for VectorIndexEnum {
         }
     }
 
-    fn build_index(&mut self, stopped: &AtomicBool) -> OperationResult<()> {
+    fn build_index(&mut self, permit: Arc<CpuPermit>, stopped: &AtomicBool) -> OperationResult<()> {
         match self {
-            VectorIndexEnum::Plain(index) => index.build_index(stopped),
-            VectorIndexEnum::HnswRam(index) => index.build_index(stopped),
-            VectorIndexEnum::HnswMmap(index) => index.build_index(stopped),
-            VectorIndexEnum::SparseRam(index) => index.build_index(stopped),
-            VectorIndexEnum::SparseMmap(index) => index.build_index(stopped),
+            VectorIndexEnum::Plain(index) => index.build_index(permit, stopped),
+            VectorIndexEnum::HnswRam(index) => index.build_index(permit, stopped),
+            VectorIndexEnum::HnswMmap(index) => index.build_index(permit, stopped),
+            VectorIndexEnum::SparseRam(index) => index.build_index(permit, stopped),
+            VectorIndexEnum::SparseMmap(index) => index.build_index(permit, stopped),
         }
     }
 
