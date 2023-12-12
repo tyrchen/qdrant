@@ -178,6 +178,9 @@ fn sparse_vector_index_consistent_with_storage() {
         &stopped,
     );
 
+    let permit_cpu_count = max_rayon_threads(0);
+    let permit = Arc::new(CpuPermit::dummy(permit_cpu_count as u32));
+
     // check consistency with underlying RAM inverted index
     check_index_storage_consistency(&sparse_vector_ram_index);
 
@@ -197,7 +200,9 @@ fn sparse_vector_index_consistent_with_storage() {
         .unwrap();
 
     // build index
-    sparse_vector_mmap_index.build_index(&stopped).unwrap();
+    sparse_vector_mmap_index
+        .build_index(permit, &stopped)
+        .unwrap();
 
     assert_eq!(
         sparse_vector_mmap_index.indexed_vector_count(),
@@ -566,6 +571,9 @@ fn sparse_vector_index_persistence_test() {
     };
     let mut segment = build_segment(dir.path(), &config, true).unwrap();
 
+    let permit_cpu_count = max_rayon_threads(0);
+    let permit = Arc::new(CpuPermit::dummy(permit_cpu_count as u32));
+
     for n in 0..num_vectors {
         let vector: Vector = random_sparse_vector(&mut rnd, dim).into();
         let mut named_vector = NamedVectors::default();
@@ -637,7 +645,9 @@ fn sparse_vector_index_persistence_test() {
     )
     .unwrap();
     // call build index to create inverted index files
-    sparse_vector_index_ram.build_index(&stopped).unwrap();
+    sparse_vector_index_ram
+        .build_index(permit, &stopped)
+        .unwrap();
 
     // reload sparse index from file
     drop(sparse_vector_index_ram);
@@ -693,7 +703,10 @@ fn sparse_vector_index_persistence_test() {
         )
         .unwrap();
     // call build index to create inverted index files
-    sparse_vector_index_mmap.build_index(&stopped).unwrap();
+    let permit = Arc::new(CpuPermit::dummy(permit_cpu_count as u32));
+    sparse_vector_index_mmap
+        .build_index(permit, &stopped)
+        .unwrap();
 
     // reload sparse index from file
     drop(sparse_vector_index_mmap);
@@ -744,6 +757,9 @@ fn sparse_vector_index_files() {
         &stopped,
     );
 
+    let permit_cpu_count = max_rayon_threads(0);
+    let permit = Arc::new(CpuPermit::dummy(permit_cpu_count as u32));
+
     let mmap_index_dir = Builder::new().prefix("mmap_index_dir").tempdir().unwrap();
 
     // create mmap sparse vector index
@@ -760,7 +776,9 @@ fn sparse_vector_index_files() {
         .unwrap();
 
     // build index
-    sparse_vector_mmap_index.build_index(&stopped).unwrap();
+    sparse_vector_mmap_index
+        .build_index(permit, &stopped)
+        .unwrap();
 
     // files for immutable RAM index
     let ram_files = sparse_vector_ram_index.files();
@@ -784,7 +802,10 @@ fn sparse_vector_index_files() {
         )
         .unwrap();
 
-    sparse_vector_mutable_index.build_index(&stopped).unwrap();
+    let permit = Arc::new(CpuPermit::dummy(permit_cpu_count as u32));
+    sparse_vector_mutable_index
+        .build_index(permit, &stopped)
+        .unwrap();
     assert_eq!(
         sparse_vector_mutable_index.indexed_vector_count(),
         sparse_vector_mmap_index.indexed_vector_count(),
