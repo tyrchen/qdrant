@@ -51,6 +51,12 @@ storage:
     # If null - auto selection.
     update_rate_limit: null
 
+    # CPU budget, how many CPUs (threads) to allocate for optimizations.
+    # If 0 - auto selection, keep 1 to 1/16th of CPUs unallocated.
+    # If negative - subtract this number of CPUs from the available CPUs.
+    # If positive - use this exact number of CPUs.
+    cpu_budget: 0
+
   optimizers:
     # The minimal fraction of deleted vectors in a segment, required to perform segment optimization
     deleted_threshold: 0.2

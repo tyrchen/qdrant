@@ -47,6 +47,7 @@ fn test_alias_operation() {
             max_optimization_threads: 1,
             update_rate_limit: None,
             search_timeout_sec: None,
+            cpu_budget: 0,
         },
         hnsw_index: Default::default(),
         quantization: None,
