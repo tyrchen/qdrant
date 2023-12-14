@@ -5,7 +5,7 @@ mod wal_recovery_test;
 use std::sync::Arc;
 use std::time::Duration;
 
-use common::cpu::{CpuBudget, OPTIMIZER_CPU_BUDGET};
+use common::cpu::CpuBudget;
 use futures::future::join_all;
 use itertools::Itertools;
 use parking_lot::{Mutex, RwLock};
@@ -51,10 +51,10 @@ async fn test_optimization_process() {
 
     let optimizers_log = Arc::new(Mutex::new(Default::default()));
     let segments: Arc<RwLock<_>> = Arc::new(RwLock::new(holder));
-    let _ = OPTIMIZER_CPU_BUDGET.set(CpuBudget::default());
     let handles = UpdateHandler::launch_optimization(
         optimizers.clone(),
         optimizers_log.clone(),
+        &CpuBudget::default(),
         segments.clone(),
         |_| {},
         None,
@@ -92,6 +92,7 @@ async fn test_optimization_process() {
     let handles = UpdateHandler::launch_optimization(
         optimizers.clone(),
         optimizers_log.clone(),
+        &CpuBudget::default(),
         segments.clone(),
         |_| {},
         None,
@@ -141,10 +142,10 @@ async fn test_cancel_optimization() {
 
     let optimizers_log = Arc::new(Mutex::new(Default::default()));
     let segments: Arc<RwLock<_>> = Arc::new(RwLock::new(holder));
-    let _ = OPTIMIZER_CPU_BUDGET.set(CpuBudget::default());
     let handles = UpdateHandler::launch_optimization(
         optimizers.clone(),
         optimizers_log.clone(),
+        &CpuBudget::default(),
         segments.clone(),
         |_| {},
         None,

@@ -356,6 +356,7 @@ mod tests {
     use std::num::{NonZeroU32, NonZeroU64};
     use std::sync::Arc;
 
+    use common::cpu::CpuBudget;
     use segment::types::Distance;
     use tempfile::{Builder, TempDir};
     use tokio::runtime::Handle;
@@ -443,6 +444,7 @@ mod tests {
             Default::default(),
             update_runtime,
             search_runtime,
+            CpuBudget::default(),
             None,
         )
         .await
