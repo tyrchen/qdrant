@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use tokio::sync::{OwnedSemaphorePermit, Semaphore, TryAcquireError};
 
-use crate::defaults::default_cpu_budget;
+use crate::defaults::default_cpu_budget_param;
 
 /// Try to read number of CPUs from environment variable `QDRANT_NUM_CPUS`.
 /// If it is not set, use `num_cpus::get()`.
@@ -38,7 +38,7 @@ pub fn get_cpu_budget(cpu_budget_param: isize) -> usize {
             .saturating_sub(-cpu_budget_param as usize)
             .max(1),
         // If zero, use automatic selection
-        Ordering::Equal => get_cpu_budget(default_cpu_budget(get_num_cpus()).get()),
+        Ordering::Equal => get_cpu_budget(default_cpu_budget_param(get_num_cpus()).get()),
         // If greater than zero, use exact number
         Ordering::Greater => cpu_budget_param as usize,
     }
@@ -92,8 +92,6 @@ impl CpuBudget {
             return;
         }
 
-        // TODO: log::trace!("Blocking optimization check, waiting for CPU budget to be available");
-
         // Wait for CPU budget to be available with exponential backoff
         // TODO: find better way, don't busy wait
         let mut delay = Duration::from_micros(100);
@@ -101,8 +99,6 @@ impl CpuBudget {
             thread::sleep(delay);
             delay = (delay * 2).min(Duration::from_secs(10));
         }
-
-        // TODO: log::trace!("Continue with optimizations, new CPU budget available");
     }
 }
 
