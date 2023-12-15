@@ -28,7 +28,7 @@ pub struct PerformanceConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub search_timeout_sec: Option<usize>,
     /// CPU budget, how many CPUs (threads) to allocate for optimizations.
-    /// If 0 - auto selection, keep 1 ore more CPUs unallocated depending on CPU size
+    /// If 0 - auto selection, keep 1 or more CPUs unallocated depending on CPU size
     /// If negative - subtract this number of CPUs from the available CPUs.
     /// If positive - use this exact number of CPUs.
     #[serde(default)]
