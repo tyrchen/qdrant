@@ -10,6 +10,7 @@ pub mod shard_selector_internal;
 pub mod shared_storage_config;
 pub mod snapshot_ops;
 pub mod types;
+mod utils;
 pub mod validation;
 pub mod vector_ops;
 

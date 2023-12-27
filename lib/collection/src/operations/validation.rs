@@ -1,6 +1,7 @@
-use actix_web_validator::error::flatten_errors;
 use serde_json::Value;
 use validator::{ValidationError, ValidationErrors};
+
+use super::utils::flatten_errors;
 
 /// Warn about validation errors in the log.
 ///

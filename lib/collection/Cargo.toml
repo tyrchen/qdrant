@@ -47,7 +47,6 @@ tower = "0.4.13"
 uuid = { version = "1.6", features = ["v4", "serde"] }
 url = { version = "2", features = ["serde"] }
 validator = { version = "0.16", features = ["derive"] }
-actix-web-validator = "5.0.1"
 
 common = { path = "../common/common" }
 cancel = { path = "../common/cancel" }
